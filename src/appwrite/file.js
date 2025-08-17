@@ -28,7 +28,7 @@ export class upLoadService{
     }
 
 
-     async upLoadFile(fileId){
+     async deleteFile(fileId){
         try {
             return await this.bucket.deleteFile(
                 conf.appwritebucketId,
