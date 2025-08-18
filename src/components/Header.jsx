@@ -1,41 +1,45 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
+import Logoutbutton from './Logoutbutton'
 
 function Header() {
+const authstate=useSelector((state)=>state.auth.status)
+
 
     const navItems = [
     {
       name: 'Home',
-      slug: "/",
-      active: false
+      slug: "/home",
+      active: authstate
     }, 
     {
       name: "Login",
       slug: "/login",
-      active: true,
+      active: !authstate,
       className:"bg-blue-400 text-white"
   },
   {
       name: "Signup",
       slug: "/signup",
-      active: true,
+      active: !authstate,
       theme:false,
       className:"bg-red-400 text-blue-400"
   },
   {
       name: "Create",
       slug: "/create",
-      active: false,
+      active: authstate,
   },
   {
       name: "Explore",
       slug: "/explore",
-      active: false,
+      active: authstate,
   },
   {
     name:"User",
     slug:"/user",
-    active:false
+    active:authstate
   }
   ]
 
@@ -46,7 +50,7 @@ function Header() {
   return (
     <header className='w-full  h-14 flex  justify-center md:justify-between items-center p-6 max-w-[1290px] m-auto shadow-[0_6px_20px_-4px_rgba(0,0,0,0.2)]'>
      <NavLink
-     to="/home">
+     to={authstate?'/home':'/'}>
       <svg className='w-[185px]'
 
 
@@ -85,7 +89,7 @@ function Header() {
 </svg> </NavLink>
     <ul className='hidden gap-10 md:flex  '>
     {navItems.map((item)=>{
-        if(!item.active){
+        if(item.active){
             return <li className='w-16 text-center m-auto ' key={item.name}>
               <NavLink
               to={item.slug}>
@@ -94,6 +98,9 @@ function Header() {
                  </li>
         }
     })}
+    {authstate&&(
+      <li><Logoutbutton/></li>
+    )}
     </ul>
     </header>
   )

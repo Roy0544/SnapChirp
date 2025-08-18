@@ -14,24 +14,33 @@ export class AuthService{
     }
 
     async createAccount({email,password,name}){
+        console.log("password recived ",password);
+        
         try {
           const userAccount=  await this.account.create(ID.unique(),email,password,name)
         //   galti ho sakta h yha
-          if(userAccount) this.login({email,password})
+          if(userAccount) {
+              console.log('About to login with:', {email, password});
+              return this.login({email,password})
+          }
           return userAccount
         } catch (error) {
             throw error;
         }
     }
     async login({email,password}){
+          console.log('Login called with:', {email, password});
+
         try {
-          return   await this.account.createEmailPasswordSession({email,password});
+            console.log('Login called with email:', email, 'password:', password); // 
+          return await this.account.createEmailPasswordSession(email,password);
         } catch (error) {
-            throw error
+            throw console.log("login error",error.code,error.message);
+            
         }
     }
 
-    async getCurrentUSer(){
+    async getCurrentUser(){
         try {
                 return this.account.get();    
         } catch (error) {
