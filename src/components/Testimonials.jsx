@@ -3,31 +3,31 @@ import React, { useState, useEffect, useRef } from 'react';
 const testimonials = [
   {
     id: 1,
-    name: "Sarah Chen",
-    role: "Product Manager",
-    company: "TechFlow",
-    avatar: "https://i.pravatar.cc/96?img=12",
-    quote: "Chirp transformed how our team collaborates. The interface is intuitive and the performance is outstanding. We shipped our product 2 weeks ahead of schedule.",
-    rating: 5
+    name: "tiyariya",
+    role: "Student",
+    company: "",
+    avatar: "https://img.freepik.com/premium-vector/avatar-profile-vector-illustrations-website-social-networks-user-profile-icon_495897-224.jpg?w=360",
+    quote: "Good Project For Practice Purpose ",
+    rating: 4
   },
   {
     id: 2,
-    name: "Marcus Rodriguez",
-    role: "CTO",
-    company: "StartupXYZ",
-    avatar: "https://i.pravatar.cc/96?img=8",
-    quote: "The developer experience is incredible. Clean APIs, great documentation, and stellar support. Our engineering team adopted it in just one day.",
+    name: "Anshu",
+    role: "Student",
+    company: "",
+    avatar: "https://cdn1.iconfinder.com/data/icons/website-internet/48/website_-_male_user-512.png",
+    quote: "Added The Basic CRUD Functionality Good For Project Purpose ,But Can Improve On The UI Part",
     rating: 5
   },
-  {
-    id: 3,
-    name: "Elena Kowalski",
-    role: "Design Lead",
-    company: "Creative Co.",
-    avatar: "https://i.pravatar.cc/96?img=15",
-    quote: "Beautiful design meets powerful functionality. Chirp fits perfectly into our workflow and our users love the seamless experience.",
-    rating: 5
-  }
+  // {
+  //   id: 3,
+  //   name: "Elena Kowalski",
+  //   role: "Design Lead",
+  //   company: "Creative Co.",
+  //   avatar: "https://i.pravatar.cc/96?img=15",
+  //   quote: "Beautiful design meets powerful functionality. Chirp fits perfectly into our workflow and our users love the seamless experience.",
+  //   rating: 5
+  // }
 ];
 
 export default function ResponsiveTestimonialCarousel() {

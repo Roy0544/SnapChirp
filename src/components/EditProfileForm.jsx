@@ -4,7 +4,7 @@ import service from '../appwrite/data';
 import { login } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
 import authservice from '../appwrite/auth';
-
+import user from '../assets/user.png'
 // import { ID } from 'appwrite';
 
 const EditProfileForm = ({isupdate,setisupdate,id}) => {
@@ -19,12 +19,9 @@ const EditProfileForm = ({isupdate,setisupdate,id}) => {
     const getposts = async () => {
       try {
         const posts = await service.getposts();
-        // console.log('Full response:', posts);
+       
         setdocuments(posts.documents)
-        // console.log('Documents:', posts.documents);
-        // setdocumentId(posts.documents[0].slug)
-        // Save the documents array to state, not the full response
-        // setpostdata(posts.documents);
+        
         
       
 
@@ -50,8 +47,6 @@ const EditProfileForm = ({isupdate,setisupdate,id}) => {
   }, [])
 
   
-  console.log(userID);
-  console.log(documents);
   
   useEffect(() => {
   if (documents.length > 0 && userID) {
@@ -61,15 +56,9 @@ const EditProfileForm = ({isupdate,setisupdate,id}) => {
     }
   }
 }, [documents, userID]);
-console.log(documentId);
+
 
   
-
-    // const matchuser=documents.filter((document)=>document.userId===userID)
-
-    // console.log("matched userid is",matchuser[0]?.slug)
-    // setdocumentId(matchuser[0]?.slug)
-
 
   const { 
     register, 
@@ -81,13 +70,13 @@ console.log(documentId);
   } = useForm({
     defaultValues: {
       username: '',
-      email: '',
-      firstName: '',
-      lastName: '',
       bio: '',
       website: '',
       location: '',
       phone: ''
+      
+    
+      
     }
   });
 
@@ -101,9 +90,9 @@ console.log(documentId);
         username:data.username,
         phonenumber:Number(data.phone),
         location:data.location,
-        profilepic:data.profilePicture[0],
         links:data.website,
         bio:data.bio
+       
       }
 
       const updateddata= await service.updateProfile(updated)
@@ -114,10 +103,6 @@ console.log(documentId);
      
       
       
-      // Simulate API call
-    //   await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Handle successful submission
       alert('Profile updated successfully!');
       
     } catch (error) {
@@ -126,77 +111,19 @@ console.log(documentId);
     }
   }; 
 
-console.log(updata);
+
 
   return (
     <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h2>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Profile Picture Section */}
-        <div className="flex items-center space-x-6">
-          <div className="shrink-0">
-            <img 
-              className="h-16 w-16 object-cover rounded-full" 
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face" 
-              alt="Current profile photo" 
-            />
-          </div>
-          <label className="block">
-            <span className="sr-only text-black">Choose profile photo</span>
-            <input 
-              type="file" 
-              
-              accept="image/*"
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-              {...register('profilePicture')}
-            />
-          </label>
-        </div>
-
+       
+       
         {/* Name Fields */}
         <div className="grid  gap-6 ">
-          <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-               Name
-            </label>
-            <input
-              type="text"
-              id="firstName"
-              className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.firstName ? 'border-red-500' : 'border-gray-300'
-              }`}
-              {...register('firstName', {
-                required: 'First name is required',
-                minLength: { value: 2, message: 'First name must be at least 2 characters' }
-              })}
-              placeholder="John"
-            />
-            {errors.firstName && (
-              <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
-            )}
-          </div>
-
-          {/* <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-              Last Name
-            </label>
-            <input
-              type="text"
-              id="lastName"
-              className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.lastName ? 'border-red-500' : 'border-gray-300'
-              }`}
-              {...register('lastName', {
-                required: 'Last name is required',
-                minLength: { value: 2, message: 'Last name must be at least 2 characters' }
-              })}
-              placeholder="Doe"
-            />
-            {errors.lastName && (
-              <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
-            )}
-          </div> */}
+          
+         
         </div>
 
         {/* Username */}
@@ -222,30 +149,7 @@ console.log(updata);
           )}
         </div>
 
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.email ? 'border-red-500' : 'border-gray-300'
-            }`}
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Invalid email address'
-              }
-            })}
-            placeholder="john@example.com"
-          />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
+       
 
         {/* Phone */}
         <div>

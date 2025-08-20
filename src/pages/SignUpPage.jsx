@@ -11,14 +11,14 @@ export default function SignUpForm() {
   const navigate=useNavigate()
 const dispatch=useDispatch()
   const onSubmit = async  (data) => {
-    console.log('Form Data:', data);
+
     try {
       const account=await authservice.createAccount(data)
-      console.log("acccount created succefully");
+
       
       if(account){
         const userdata=await authservice.getCurrentUser()
-        console.log(userdata);
+   
         
         dispatch(login(userdata))
 
@@ -103,18 +103,7 @@ const dispatch=useDispatch()
           {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
         </div>
 
-        {/* Terms */}
-        {/* <div className="mb-6">
-          <label className="inline-flex items-center">
-            <input
-              type="checkbox"
-              {...register('terms', { required: 'You must agree to the terms' })}
-              className="form-checkbox text-sky-600 border-neutral-300 rounded focus:ring-sky-500"
-            />
-            <span className="ml-2 text-neutral-700 text-sm">I agree to the Terms and Privacy Policy</span>
-          </label>
-          {errors.terms && <p className="text-red-500 text-sm mt-1">{errors.terms.message}</p>}
-        </div> */}
+       
 
         <button
           type="submit"

@@ -1,8 +1,14 @@
 import React from 'react'
 import Card from  '../assets/Twitter.svg'
 import ResponsiveTestimonialCarousel from '../components/Testimonials'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
+  const navigate=useNavigate()
+
+  const navigatetologin=()=>{
+    navigate('/login')
+  }
   return (
     <div>
 
@@ -10,8 +16,10 @@ function Home() {
       <div id="left" className='w-[90%] lg:w-[40%]' >
 
       <p className='text-5xl'>Conncet Share  <br /> Discover </p>
-      <p className='mt-6'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere rerum mollitia id quis illum. Beatae, dolore!</p>
-      <button className='mt-9 text-2xl text-center bg-blue-400 text-white font-medium w-[180px] rounded-2xl h-11'>Get Started</button>
+      <p className='mt-6'>"Welcome to SnapChirp — a space built for simplicity, security, and community.
+Sign in to explore and share.
+Your journey starts here."</p>
+      <button onClick={navigatetologin} className='mt-9 text-2xl text-center bg-blue-400 text-white font-medium w-[180px] rounded-2xl h-11'>Get Started</button>
       </div>
       <div id="right" className='mt-16 '>
         {/* <img src={Card} className='w-[486px]' alt="" /> */}
@@ -80,7 +88,7 @@ function Home() {
       <div id="bottompart" className='w-[80vw] m-auto mt-18 '>
 
         <h1 className='text-center text-3xl font-medium'> What Our Users Are Saying</h1>
-        <p className='text-center text-[17px] mt-4'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, voluptatum similique? Ducimus alias nulla qui laborum?</p>
+        <p className='text-center text-[17px] mt-4'>From Users</p>
       </div>
       <div>
         <ResponsiveTestimonialCarousel/>

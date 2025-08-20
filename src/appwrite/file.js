@@ -16,7 +16,7 @@ export class upLoadService{
 
     async upLoadFile(file){
         try {
-            console.log("it has reached here with",file)
+          
             return await this.bucket.createFile(
                 
                 conf.appwritebucketId,

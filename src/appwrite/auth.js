@@ -14,13 +14,13 @@ export class AuthService{
     }
 
     async createAccount({email,password,name}){
-        console.log("password recived ",password);
+        
         
         try {
           const userAccount=  await this.account.create(ID.unique(),email,password,name)
         //   galti ho sakta h yha
           if(userAccount) {
-              console.log('About to login with:', {email, password});
+             
               return this.login({email,password})
           }
           return userAccount
@@ -29,14 +29,14 @@ export class AuthService{
         }
     }
     async login({email,password}){
-          console.log('Login called with:', {email, password});
+        //   console.log('Login called with:', {email, password});
 
         try {
-            console.log('Login called with email:', email, 'password:', password); // 
+          
           return await this.account.createEmailPasswordSession(email,password);
         } catch (error) {
-            throw console.log("login error",error.code,error.message);
-            
+             console.log("login error",error.code,error.message);
+            throw error
         }
     }
 

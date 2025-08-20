@@ -13,7 +13,8 @@ export default function LoginForm() {
   const [errorMessage, setErrorMessage] = useState('');
 const dispatch=useDispatch()
   const onSubmit = async (data) => {
-    console.log('Login Data:', data);
+
+  
     setIsLoading(true);
     setErrorMessage('');
     
@@ -34,7 +35,8 @@ const dispatch=useDispatch()
       navigate('/home');
 
     } catch (error) {
-      console.log('Login error:', error.message, error.code);
+      console.log('Login error:',error.code, error.message, );
+     
       
       // Show user-friendly error messages
       if (error.code === 401) {
@@ -115,21 +117,7 @@ const dispatch=useDispatch()
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
-          {/* Remember Me & Forgot Password */}
-          {/* <div className="flex items-center justify-between">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                {...register('remember')}
-                className="h-4 w-4 text-sky-600 border-neutral-300 rounded focus:ring-sky-500"
-                disabled={isLoading}
-              />
-              <span className="ml-2 text-sm text-neutral-700">Remember me</span>
-            </label>
-            <Link to="/forgot-password" className="text-sm text-sky-600 hover:underline">
-              Forgot password?
-            </Link>
-          </div> */}
+        
 
           {/* Submit Button */}
           <button
@@ -148,20 +136,7 @@ const dispatch=useDispatch()
           <div className="flex-1 h-px bg-neutral-200"></div>
         </div>
 
-        {/* Google Login (Optional) */}
-        <button 
-          type="button"
-          disabled={isLoading}
-          className="w-full py-3 border border-neutral-300 rounded-lg flex items-center justify-center gap-2 text-neutral-700 bg-neutral-50 hover:bg-neutral-100 transition-colors font-medium disabled:opacity-50"
-        >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none">
-            <path fill="#4285F4" d="M21.805 10.023H21v-.001H12v4.001h5.545c-.239 1.222-.955 2.26-2.03 2.978v2.474h3.29c1.926-1.774 3.034-4.391 3-7.453z"/>
-            <path fill="#34A853" d="M12 22c2.43 0 4.471-.805 5.962-2.175l-3.29-2.474c-.914.613-2.082.975-3.338.975-2.574 0-4.757-1.736-5.541-4.063H2.21v2.54A10 10 0 0012 22z"/>
-            <path fill="#FBBC05" d="M6.459 14.263A5.993 5.993 0 016.119 12c0-.783.137-1.539.34-2.263V7.197H2.21A10 10 0 002 12c0 1.611.39 3.136 1.079 4.443l3.38-2.18z"/>
-            <path fill="#EA4335" d="M12 6.988c1.326 0 2.512.457 3.45 1.356l2.584-2.57C16.467 4.718 14.427 4 12 4A10 10 0 002.21 7.197l3.379 2.263C7.243 8.721 9.426 6.988 12 6.988z"/>
-          </svg>
-          Continue with Google
-        </button>
+       
 
         {/* Sign Up Link */}
         <p className="mt-6 text-sm text-neutral-600 text-center">
