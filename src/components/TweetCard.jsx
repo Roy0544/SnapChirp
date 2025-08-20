@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import uploadservice from '../appwrite/file';
 
-export default function TweetCard() {
+export default function TweetCard({ name, content, image}) {
+
+  const [imgUrl, setimgUrl] = useState("")
+
+  useEffect(() => {
+    const getimage=(image)=>{
+  const images=  uploadservice.getFilePreview(image)
+  console.log(images);
+  setimgUrl(images)
+  
+    }
+    getimage(image)
+  }, [])
+
   return (
     <article className=" shadow-[0_6px_20px_-4px_rgba(0,0,0,0.2)] max-w-xl w-full border-b border-neutral-200 bg-white hover:bg-neutral-50 transition-colors cursor-pointer">
       <div className="p-4 flex gap-3">
@@ -15,17 +29,22 @@ export default function TweetCard() {
         <div className="flex-1 min-w-0">
           {/* Header: Name, handle, timestamp */}
           <div className="flex items-center gap-1 text-sm">
-            <span className="font-bold text-neutral-900 hover:underline cursor-pointer">Jane Smith</span>
-            <span className="text-neutral-500">@janesmith</span>
+            <span className="font-bold text-neutral-900 hover:underline cursor-pointer">{name}</span>
+            <span className="text-neutral-500">@{name}</span>
             <span className="text-neutral-400">·</span>
             <time className="text-neutral-500 hover:underline cursor-pointer" dateTime="2025-08-17">3h</time>
           </div>
 
           {/* Tweet text */}
           <div className="mt-1 text-[15px] leading-5 text-neutral-900">
-            Just shipped a major update to our design system! 🚀 The new components are so much cleaner and the dev experience is incredible.
+           {content}
             <span className="text-sky-500 hover:underline cursor-pointer"> #DesignSystem</span>
             <span className="text-sky-500 hover:underline cursor-pointer"> #Frontend</span>
+          </div>
+          {/* image section */}
+
+          <div>
+            <img src={imgUrl} alt="" />
           </div>
 
           {/* Actions */}

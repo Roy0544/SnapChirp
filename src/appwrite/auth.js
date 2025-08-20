@@ -57,6 +57,7 @@ export class AuthService{
             console.log("Appwrite service::getcurrentuser::error",error);
         }
     }
+    
 
 }
 

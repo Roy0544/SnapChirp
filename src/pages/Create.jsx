@@ -1,6 +1,147 @@
- import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import authservice from '../appwrite/auth';
+import { login } from '../store/authSlice';
+import { useSelector } from 'react-redux';
+import service from '../appwrite/data';
+
+import { ID } from 'appwrite';
+import uploadservice from '../appwrite/file';
+
+
 
 const CreatePostPage = () => {
+
+  const [udata, setudata] = useState({})
+  const [loading, setLoading] = useState(false);
+  const [inputval, setinputval] = useState("")
+  // const [image, setimage] = useState(second)
+  const [previewUrl, setpreviewUrl] = useState(null)
+  const imageRef = useRef({});
+  const [isreply, setisreply] = useState(true)
+
+
+  const userdata = useSelector((state) => state.auth.userdata)
+
+
+  useEffect(() => {
+    console.log('User data from Redux:', userdata);
+    if (userdata) {
+      setudata(userdata);
+    }
+  }, []);
+
+
+  // useEffect(() => {
+  //   const getUserInfo = async () => {
+  //     try {
+  //       const userdata = await authservice.getCurrentUser();
+  //       console.log(userdata);
+  //       setudata(userdata); // ✅ Set the user data in state
+  //     } catch (error) {
+  //       console.error('Error fetching user:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   getUserInfo();
+  // }, []);
+
+
+
+
+  const posthandler = async () => {
+    if (!inputval.trim()) {
+      alert('Please enter some content!');
+      return;
+    }
+    try {
+      setLoading(true)
+      let featuredImageId = null;
+      if (setLoading) {
+        const uploadedFile = await uploadservice.upLoadFile(imageRef.current.file);
+        console.log('file uploaded',uploadedFile);
+       
+        
+
+        featuredImageId = uploadedFile.$id;
+        const postData = {
+          
+          slug: String(ID.unique()), // Generate unique ID for the post
+          content: inputval,
+          featuredImage: featuredImageId,
+          status: 'published',
+          userId: udata.$id,
+          username: udata.name,
+          reply:String(isreply)
+
+        };
+        const newPost = await service.createPost(postData);
+        if (newPost) {
+          alert('Post created successfully!');
+
+          // Reset form
+          setinputval('');
+          setpreviewUrl(null);
+          imageRef.current = null;
+
+          // Optionally navigate to the post or home
+          // navigate('/home');
+        }
+
+      }
+    } catch (error) {
+      console.error('Error creating post:', error);
+
+    }
+    finally {
+      setLoading(false)
+    }
+
+
+  }
+
+  const inputhandler = (e) => {
+    console.log(e.target.value);
+    setinputval(e.target.value)
+
+  }
+  const replycheck=()=>{
+    setisreply(!isreply)
+     console.log(isreply);
+  }
+  const imagehandler = (e) => {
+    console.log(e.target.files);
+    const images = e.target.files[0]
+    if (images && images.type.startsWith("image/")) {
+      const url = URL.createObjectURL(images);
+      setpreviewUrl(url);
+      imageRef.current = {
+        file: images,
+        name: images.name,
+        size: images.size,
+        type: images.type,
+        reply:true
+      };
+      // Optionally keep the file too, e.g. setimage(file);
+    } else {
+      setpreviewUrl(null); // Not an image or reset
+    }
+
+
+  }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mx-auto mb-4"></div>
+          <p className="text-neutral-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+
   return (
     <div className="min-h-screen bg-neutral-50">
       <div className="max-w-4xl mx-auto p-4">
@@ -12,12 +153,12 @@ const CreatePostPage = () => {
               {/* <button className="px-4 py-2 text-neutral-600 border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors text-sm font-medium">
                 Save Draft
               </button> */}
-              <button className="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm font-bold">
+              <button onClick={posthandler} className="px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm font-bold">
                 Post
               </button>
             </div>
           </div>
-          
+
           {/* Audience Selector */}
           <div className="flex items-center gap-2 text-sm">
             <span className="text-neutral-600">Posting to:</span>
@@ -45,8 +186,8 @@ const CreatePostPage = () => {
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div>
-                  <p className="font-bold text-neutral-900">Your Name</p>
-                  <p className="text-sm text-neutral-500">@yourhandle</p>
+                  <p className="font-bold text-neutral-900">{udata.name}</p>
+                  <p className="text-sm text-neutral-500">@{udata.name}</p>
                 </div>
               </div>
 
@@ -54,10 +195,11 @@ const CreatePostPage = () => {
               <div className="mb-4">
                 <textarea
                   placeholder="What's happening?"
+                  onChange={inputhandler}
                   className="w-full p-4 text-xl placeholder-neutral-400 border border-neutral-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   rows="6"
                 ></textarea>
-                
+
                 {/* Character Counter */}
                 <div className="flex items-center justify-between mt-2">
                   {/* <div className="text-sm text-neutral-500">
@@ -89,27 +231,87 @@ const CreatePostPage = () => {
               </div>
 
               {/* Media Upload Area */}
-              <div className="mb-4">
-                <div className="border-2 border-dashed border-neutral-300 rounded-lg p-6 text-center hover:border-sky-400 hover:bg-sky-50/50 transition-colors cursor-pointer">
-                  <svg className="h-12 w-12 text-neutral-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p className="text-neutral-600 mb-1">Drag and drop media here, or click to browse</p>
-                  <p className="text-xs text-neutral-500">PNG, JPG, GIF up to 10MB</p>
-                  <input type="file" className="hidden" accept="image/*,video/*" multiple />
-                </div>
-              </div>
+              {previewUrl && (
+
+                <div className="mb-4">
+                  {/* File Preview Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {/* Single File Preview Item */}
+                    <div className="relative bg-neutral-50 rounded-lg p-2 border">
+                      {/* Image Preview */}
+                      <img
+                        src={previewUrl}
+                        alt={imageRef.current.name}
+                        className="w-full h-32 object-cover rounded"
+                      />
+
+                      {/* File Info & Remove Button */}
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-xs text-neutral-600 truncate">{imageRef.current.name}</span>
+                        <button className="text-red-500 hover:text-red-700 text-xs ml-1">
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Video Preview Item */}
+                    {/* <div className="relative bg-neutral-50 rounded-lg p-2 border">
+      <video
+        src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+        className="w-full h-32 object-cover rounded"
+        controls
+      />
+      
+      <div className="flex justify-between items-center mt-2">
+        <span className="text-xs text-neutral-600 truncate">video.mp4</span>
+        <button className="text-red-500 hover:text-red-700 text-xs ml-1">
+          ✕
+        </button>
+      </div>
+    </div> */}
+
+                    {/* Another Image */}
+                    {/* <div className="relative bg-neutral-50 rounded-lg p-2 border">
+      <img
+        src="https://via.placeholder.com/150/0000FF"
+        alt="image2.png"
+        className="w-full h-32 object-cover rounded"
+      />
+      
+      <div className="flex justify-between items-center mt-2">
+        <span className="text-xs text-neutral-600 truncate">image2.png</span>
+        <button className="text-red-500 hover:text-red-700 text-xs ml-1">
+          ✕
+        </button>
+      </div>
+    </div> */}
+                  </div>
+                </div>)}
+
+
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between pt-4 border-t border-neutral-200">
                 <div className="flex items-center gap-2">
                   {/* Media Button */}
-                  <button className="flex items-center gap-2 px-3 py-2 text-sky-600 hover:bg-sky-50 rounded-lg transition-colors">
+                  <label className="px-6 py-2 bg-sky-600 text-white rounded-2xl text-sm font-semibold flex items-center gap-2 cursor-pointer hover:bg-sky-700 transition-colors ">
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Browse Files
+                    <input
+                      onChange={imagehandler}
+                      type="file"
+                      className="hidden"
+                      accept="image/png,image/jpg,image/jpeg,image/gif"
+                    />
+                  </label>
+                  {/* <button className="flex items-center gap-2 px-3 py-2 text-sky-600 hover:bg-sky-50 rounded-lg transition-colors">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <span className="text-sm font-medium">Media</span>
-                  </button>
+                  </button> */}
 
                   {/* GIF Button */}
                   {/* <button className="flex items-center gap-2 px-3 py-2 text-sky-600 hover:bg-sky-50 rounded-lg transition-colors">
@@ -145,14 +347,14 @@ const CreatePostPage = () => {
                   </button> */}
                 </div>
 
-                <button className="px-6 py-2 bg-sky-600 text-white rounded-full hover:bg-sky-700 transition-colors text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed">
+                {/* <button className="px-6 py-2 bg-sky-600 text-white rounded-full hover:bg-sky-700 transition-colors text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed">
                   Post
-                </button>
+                </button> */}
               </div>
             </div>
 
             {/* Poll Creation (Hidden by default) */}
-            <div className="bg-white border border-neutral-200 rounded-lg p-6 mt-4 hidden">
+            {/* <div className="bg-white border border-neutral-200 rounded-lg p-6 mt-4 hidden">
               <h3 className="font-bold text-neutral-900 mb-4">Create a Poll</h3>
               <div className="space-y-3">
                 <input
@@ -169,7 +371,7 @@ const CreatePostPage = () => {
                   + Add choice
                 </button>
               </div>
-              
+
               <div className="flex items-center gap-4 mt-4">
                 <select className="px-3 py-2 border border-neutral-300 rounded-lg text-sm">
                   <option>1 day</option>
@@ -180,7 +382,7 @@ const CreatePostPage = () => {
                   Remove poll
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Sidebar - 1/3 */}
@@ -188,7 +390,7 @@ const CreatePostPage = () => {
             {/* Post Settings */}
             <div className="bg-white border border-neutral-200 rounded-lg p-6">
               <h2 className="text-lg font-bold text-neutral-900 mb-4">Post Settings</h2>
-              
+
               <div className="space-y-4">
                 {/* Schedule Post */}
                 {/* <div>
@@ -215,7 +417,7 @@ const CreatePostPage = () => {
                 {/* Disable replies */}
                 <div>
                   <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4 text-sky-600 border-neutral-300 rounded focus:ring-sky-500" />
+                    <input type="checkbox" onClick={replycheck} className="w-4 h-4 text-sky-600 border-neutral-300 rounded focus:ring-sky-500" />
                     <span className="text-sm text-neutral-700">Disable replies</span>
                   </label>
                 </div>
@@ -225,7 +427,7 @@ const CreatePostPage = () => {
             {/* Quick Tips */}
             <div className="bg-white border border-neutral-200 rounded-lg p-6">
               <h2 className="text-lg font-bold text-neutral-900 mb-4">Quick Tips</h2>
-              
+
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-sky-100 rounded-full flex items-center justify-center mt-0.5">

@@ -16,7 +16,9 @@ export class upLoadService{
 
     async upLoadFile(file){
         try {
+            console.log("it has reached here with",file)
             return await this.bucket.createFile(
+                
                 conf.appwritebucketId,
                 ID.unique(),
                 file
@@ -43,7 +45,7 @@ export class upLoadService{
     }
 
     getFilePreview(fileId){
-        return this.bucket.getFilePreview(
+        return this.bucket.getFileView(
             conf.appwritebucketId,
             fileId
         )
